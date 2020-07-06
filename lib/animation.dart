@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
 
@@ -7,7 +8,7 @@ class animation extends StatefulWidget {
 }
 
 class _animationState extends State<animation> with TickerProviderStateMixin {
-  Animation animation;
+  Animation animation, delayedanimation, muchdelayedanimation,furtherdelayedanimation;
   AnimationController _controller;
 
   String name;
@@ -15,22 +16,37 @@ class _animationState extends State<animation> with TickerProviderStateMixin {
   String password;
   @override
   void initState() {
-    Future.delayed(Duration(
-      seconds: 3,
-    ));
+//    Future.delayed(Duration(
+//      seconds: 3,
+//    ));
     _controller = AnimationController(
-      duration: Duration(seconds: 4),
+      duration: Duration(seconds: 3),
       vsync: this,
     );
-    animation = Tween(begin: -1.0, end: 0.0).animate(
-        CurvedAnimation(parent: _controller, curve: Curves.bounceOut));
-     animation.addListener(() {
-      setState(() {
-             });
-      });
+    animation = Tween(begin: -1.0, end: 0.0)
+        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    delayedanimation = Tween(begin: -1.0, end: 0.0).animate(
+        CurvedAnimation(parent: _controller, curve:Interval(0.4,1.0,curve: Curves.easeInOut))
+    );
+    muchdelayedanimation = Tween(begin: -1.0, end: 0.0).animate(
+        CurvedAnimation(parent: _controller, curve:Interval(0.6,1.0,curve: Curves.easeInOut))
+    );
+    furtherdelayedanimation=Tween(begin: -1.0,end: 0.0).animate(CurvedAnimation(
+      parent: _controller,curve: Interval(0.8,1.0,curve: Curves.easeInOut)
+    ));
+
+    animation.addListener(() {
+      setState(() {});
+    });
     _controller.forward();
 
     super.initState();
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _controller.dispose();
+
   }
 
   @override
@@ -38,138 +54,147 @@ class _animationState extends State<animation> with TickerProviderStateMixin {
     final width = MediaQuery.of(context).size.width;
     return AnimatedBuilder(
         animation: _controller,
-        builder: (BuildContext contex,Widget child) {
+        builder: (BuildContext context, Widget child) {
           return Scaffold(
-              appBar: AppBar(
-                centerTitle: true,
-                title: Text("Animations",style: TextStyle(
-                    decorationThickness: 12,
-                    decorationColor: Colors.deepOrange,
-                    fontStyle: FontStyle.italic,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold
+            body: Align(
+              alignment: Alignment.center,
+              child: ListView(
+                shrinkWrap: true,
+                children: <Widget>[
+                  Transform(
+                    transform: Matrix4.translationValues(
+                        animation.value * width, 0.0, 0.0),
+                    child: Center(
 
-                ),),
-                backgroundColor: Colors.blueGrey.shade500,
-                elevation: 18,
-
-              ),
-              body: Transform(
-                transform:
-                Matrix4.translationValues(animation.value * width, 0.0, 0.0),
-
-
-                child: SingleChildScrollView(
-                  // scrollDirection: Axis.horizontal,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          SizedBox(
-                            height: 24,
-                          ),
-                          //  Text("Login",style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),),
-                          TextFormField(
-                            textCapitalization: TextCapitalization.words,
-                            decoration: InputDecoration(
-                                border: UnderlineInputBorder(),
-                                filled: true,
-                                icon: Icon(Icons.person),
-                                hintText: "What should we call you?",
-                                labelText: "Name *"),
-                            onSaved: (String value) {
-                              this.name = value;
-                            },
-                          ),
-                          SizedBox(
-                            height: 24,
-                          ),
-                          //  Text("Login",style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),),
-                          TextFormField(
-                            textCapitalization: TextCapitalization.words,
-                            decoration: InputDecoration(
-                                border: UnderlineInputBorder(),
-                                filled: true,
-                                icon: Icon(Icons.email),
-                                hintText: "What is your email?",
-                                labelText: "Email *"),
-                            onSaved: (String value) {
-                              this.email = value;
-                            },
-                          ),
-                          SizedBox(
-                            height: 24,
-                          ),
-                          //  Text("Login",style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),),
-                          TextFormField(
-                            textCapitalization: TextCapitalization.words,
-                            decoration: InputDecoration(
-                                border: UnderlineInputBorder(),
-                                filled: true,
-                                icon: Icon(Icons.phone),
-                                hintText: "How should we contact you?",
-                                labelText: "Number *"),
-                            onSaved: (String value) {
-                              this.email = value;
-                            },
-                          ),
-                          SizedBox(
-                            height: 24,
-                          ),
-                          //  Text("Login",style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),),
-                          TextFormField(
-                            textCapitalization: TextCapitalization.words,
-                            decoration: InputDecoration(
-                                border: UnderlineInputBorder(),
-                                filled: true,
-                                icon: Icon(Icons.fingerprint),
-                                hintText: "Your security keeper?",
-                                labelText: "Password *"),
-                            onSaved: (String value) {
-                              this.password = value;
-                            },
-                          ),
-
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                        child: Container(
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
+                            //mainAxisSize: MainAxisSize.max,
                             children: <Widget>[
-                              RaisedButton(
-                                color: Colors.black,
-                                child: Text("Login",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,
-                                    fontStyle: FontStyle.italic,
-                                    fontSize: 24 ),),
-                                onPressed: (){
-
-                                },
-
-
+                              SizedBox(
+                                height: 24,
                               ),
-
-                            ],
-                          ),
-                          Text("Don't have an account?",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-
-                            children: <Widget>[
-                              RaisedButton(
-                                child:Text("Sign in",style:TextStyle(fontWeight: FontWeight.bold,fontSize: 18)),
-                                color: Colors.green,
-                                onPressed: (){
-
+                              //  Text("Login",style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),),
+                              TextFormField(
+                                textCapitalization: TextCapitalization.words,
+                                decoration: InputDecoration(
+                                    border: UnderlineInputBorder(),
+                                    filled: true,
+                                    icon: Icon(Icons.person),
+                                    hintText: "What is your name?",
+                                    labelText: "Name *"),
+                                onSaved: (String value) {
+                                  this.name = value;
                                 },
-                              )
+                              ),
                             ],
-                          )
+                          ),
+                        ),
+
+                    ),
+                  ),
+                  Transform(
+                    transform: Matrix4.translationValues(
+                        delayedanimation.value * width, 0.0, 0.0),
+                    child: Center(
+                        child: Container(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            //      mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              SizedBox(
+                                height: 24,
+                              ),
+                              //  Text("Login",style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),),
+                              TextFormField(
+                                textCapitalization: TextCapitalization.words,
+                                decoration: InputDecoration(
+                                    border: UnderlineInputBorder(),
+                                    filled: true,
+                                    icon: Icon(Icons.email),
+                                    hintText: "What is your email?",
+                                    labelText: "Email *"),
+                                onSaved: (String value) {
+                                  this.email = value;
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+
+                    ),
+                  ),
+                  Transform(
+                    transform: Matrix4.translationValues(muchdelayedanimation.value*width, 0.0, 0.0),
+                    child: Center(
+                      child: Container(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            SizedBox(
+                              height: 24,
+                            ),
+                            //  Text("Login",style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),),
+                            TextFormField(
+                              textCapitalization: TextCapitalization.words,
+                              decoration: InputDecoration(
+                                  border: UnderlineInputBorder(),
+                                  filled: true,
+                                  icon: Icon(Icons.fingerprint),
+                                  hintText: "Security Keeper?",
+                                  labelText: "Password*"),
+                              onSaved: (String value) {
+                                this.password = value;
+                              },
+                            ),
+                            SizedBox(
+                              height: 24,
+                            ),
+                            //  Text("Login",style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),),
+                            TextFormField(
+                              textCapitalization: TextCapitalization.words,
+                              decoration: InputDecoration(
+                                  border: UnderlineInputBorder(),
+                                  filled: true,
+                                  icon: Icon(Icons.mobile_screen_share),
+                                  hintText: "How should we contact you?",
+                                  labelText: "Number *"),
+                              onSaved: (String value) {
+                                this.password = value;
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                  ),
+                  Transform(
+                    transform: Matrix4.translationValues(furtherdelayedanimation.value*width, 0.0,0.0),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                             RaisedButton(
+                              child: Text("Login",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Color(0xFF000000)),),
+                                 color: Colors.deepOrange,
+
+                               onPressed: (){
+
+                                 },
+                             )
+
 
                         ],
                       ),
-                    )),
-              ));
+                    )
+                  )
+
+                ],
+              ),
+            ),
+          );
         });
   }
 }
